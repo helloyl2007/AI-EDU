@@ -6,6 +6,9 @@
 
 **核心功能**
 
+视频介绍：
+https://www.bilibili.com/video/BV1QP2qBMEsn/
+
 ---
 
 ## 1. 课堂巩固
