@@ -1,0 +1,30 @@
+{
+  "grades": [
+    { "value": "小学一年级", "label": "小学一年级" },
+    { "value": "小学二年级", "label": "小学二年级" },
+    { "value": "小学三年级", "label": "小学三年级" },
+    { "value": "小学四年级", "label": "小学四年级" },
+    { "value": "小学五年级", "label": "小学五年级" },
+    { "value": "小学六年级", "label": "小学六年级" },
+    { "value": "初中一年级", "label": "初中一年级" },
+    { "value": "初中二年级", "label": "初中二年级" },
+    { "value": "初中三年级", "label": "初中三年级" }
+  ],
+  "subjects": {
+    "primary": [
+      { "value": "语文", "label": "语文" },
+      { "value": "数学", "label": "数学" },
+      { "value": "英语", "label": "英语" }
+    ],
+    "junior": [
+      { "value": "语文", "label": "语文" },
+      { "value": "数学", "label": "数学" },
+      { "value": "英语", "label": "英语" },
+      { "value": "物理", "label": "物理" },
+      { "value": "化学", "label": "化学" },
+      { "value": "生物", "label": "生物" },
+      { "value": "历史", "label": "历史" },
+      { "value": "地理", "label": "地理" }
+    ]
+  }
+}

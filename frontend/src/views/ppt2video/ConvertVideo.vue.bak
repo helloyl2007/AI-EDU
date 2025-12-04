@@ -1,0 +1,172 @@
+<template>
+  <div class="convert-video">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <h3>PPT转视频 - {{ pptInfo.filename }}</h3>
+        </div>
+      </template>
+
+      <div v-if="!isConverted" class="settings-section">
+        <el-form :model="convertSettings" label-width="120px">
+          <el-form-item label="语音选择">
+            <el-select v-model="convertSettings.voice" placeholder="请选择语音">
+              <el-option label="女声" value="female" />
+              <el-option label="男声" value="male" />
+            </el-select>
+          </el-form-item>
+          
+          <el-form-item label="语速">
+            <el-slider
+              v-model="convertSettings.speed"
+              :min="0.5"
+              :max="2"
+              :step="0.1"
+              show-input
+            />
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="startConvert" :loading="converting">
+              开始转换
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <div v-if="converting" class="progress-section">
+        <el-progress 
+          :percentage="convertProgress" 
+          :status="convertProgress === 100 ? 'success' : ''"
+        />
+        <p class="progress-text">正在转换第 {{ currentSlide }} 张幻灯片...</p>
+      </div>
+
+      <div v-if="isConverted" class="preview-section">
+        <video 
+          v-if="videoUrl" 
+          :src="videoUrl" 
+          controls 
+          class="preview-video"
+        ></video>
+        <div class="action-buttons">
+          <el-button type="primary" @click="handleDownload">
+            下载视频
+          </el-button>
+        </div>
+      </div>
+    </el-card>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
+
+const route = useRoute()
+const pptId = route.params.id
+
+const pptInfo = ref({
+  filename: '',
+  totalSlides: 0
+})
+
+const convertSettings = reactive({
+  voice: 'female',
+  speed: 1
+})
+
+const converting = ref(false)
+const isConverted = ref(false)
+const convertProgress = ref(0)
+const currentSlide = ref(0)
+const videoUrl = ref('')
+
+onMounted(async () => {
+  try {
+    const response = await axios.get(`/api/ppt2video/${pptId}`)
+    pptInfo.value = response.data
+    if (response.data.status === 'completed') {
+      isConverted.value = true
+      videoUrl.value = response.data.videoUrl
+    }
+  } catch (error) {
+    ElMessage.error('获取PPT信息失败')
+  }
+})
+
+async function startConvert() {
+  try {
+    converting.value = true
+    const response = await axios.post(`/api/ppt2video/${pptId}/convert`, convertSettings)
+    
+    // 模拟转换进度
+    const timer = setInterval(() => {
+      if (convertProgress.value < 100) {
+        convertProgress.value += 10
+        currentSlide.value = Math.ceil((convertProgress.value / 100) * pptInfo.value.totalSlides)
+      } else {
+        clearInterval(timer)
+        converting.value = false
+        isConverted.value = true
+        videoUrl.value = response.data.videoUrl
+        ElMessage.success('转换完成')
+      }
+    }, 1000)
+  } catch (error) {
+    converting.value = false
+    ElMessage.error('转换失败')
+  }
+}
+
+function handleDownload() {
+  if (videoUrl.value) {
+    window.open(videoUrl.value)
+  }
+}
+</script>
+
+<style scoped>
+.convert-video {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-section {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.progress-section {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.progress-text {
+  margin-top: 10px;
+  color: #666;
+}
+
+.preview-section {
+  text-align: center;
+}
+
+.preview-video {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px 0;
+}
+
+.action-buttons {
+  margin-top: 20px;
+}
+</style>

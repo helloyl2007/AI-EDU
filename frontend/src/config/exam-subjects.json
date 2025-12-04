@@ -1,0 +1,851 @@
+{
+  "options": [
+    {
+      "value": "小学",
+      "label": "小学",
+      "children": [
+        {
+          "value": "一年级",
+          "label": "一年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "二年级",
+          "label": "二年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                },
+                {
+                  "value": "图形",
+                  "label": "图形"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "三年级",
+          "label": "三年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "词句默写",
+                  "label": "词句默写"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                },
+                {
+                  "value": "图形",
+                  "label": "图形"
+                },
+                {
+                  "value": "角度",
+                  "label": "角度"
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "children": [
+                {
+                  "value": "单词默写",
+                  "label": "单词默写"
+                },
+                {
+                  "value": "写作",
+                  "label": "写作"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "四年级",
+          "label": "四年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "词句默写",
+                  "label": "词句默写"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                },
+                {
+                  "value": "图形",
+                  "label": "图形"
+                },
+                {
+                  "value": "角度",
+                  "label": "角度"
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "children": [
+                {
+                  "value": "单词默写",
+                  "label": "单词默写"
+                },
+                {
+                  "value": "写作",
+                  "label": "写作"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "五年级",
+          "label": "五年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "词句默写",
+                  "label": "词句默写"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                },
+                {
+                  "value": "图形",
+                  "label": "图形"
+                },
+                {
+                  "value": "角度",
+                  "label": "角度"
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "children": [
+                {
+                  "value": "单词默写",
+                  "label": "单词默写"
+                },
+                {
+                  "value": "中译英",
+                  "label": "中译英"
+                },
+                {
+                  "value": "写作",
+                  "label": "写作"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "六年级",
+          "label": "六年级",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "children": [
+                {
+                  "value": "拼音写字",
+                  "label": "拼音题"
+                },
+                {
+                  "value": "阅读题",
+                  "label": "阅读题"
+                },
+                {
+                  "value": "词句默写",
+                  "label": "词句默写"
+                },
+                {
+                  "value": "作文日记",
+                  "label": "作文日记"
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "children": [
+                {
+                  "value": "基础运算",
+                  "label": "基础运算"
+                },
+                {
+                  "value": "混合运算",
+                  "label": "混合运算"
+                },
+                {
+                  "value": "图形",
+                  "label": "图形"
+                },
+                {
+                  "value": "角度",
+                  "label": "角度"
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "children": [
+                {
+                  "value": "单词默写",
+                  "label": "单词默写"
+                },
+                {
+                  "value": "中译英",
+                  "label": "中译英"
+                },
+                {
+                  "value": "英译中",
+                  "label": "英译中"
+                },
+                {
+                  "value": "写作",
+                  "label": "写作"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "初中",
+      "label": "初中",
+      "children": [
+        {
+          "value": "一年级",
+          "label": "初一",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "作文",
+                  "label": "作文",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "方程式",
+                  "label": "方程式",
+                  "disabled": true
+                },
+                {
+                  "value": "三角函数",
+                  "label": "三角函数",
+                  "disabled": true
+                },
+                {
+                  "value": "图形坐标",
+                  "label": "图形坐标",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "七选五",
+                  "label": "七选五",
+                  "disabled": true
+                },
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "中译英",
+                  "label": "中译英",
+                  "disabled": true
+                },
+                {
+                  "value": "写作",
+                  "label": "写作",
+                  "disabled": true
+                },
+                {
+                  "value": "纠错",
+                  "label": "纠错",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "生物",
+              "label": "生物",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "细胞生物学",
+                  "label": "细胞生物学",
+                  "disabled": true
+                },
+                {
+                  "value": "生态学",
+                  "label": "生态学",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "地理",
+              "label": "地理",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "自然地理",
+                  "label": "自然地理",
+                  "disabled": true
+                },
+                {
+                  "value": "人文地理",
+                  "label": "人文地理",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "政治",
+              "label": "政治",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "政治理论",
+                  "label": "政治理论",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "历史",
+              "label": "历史",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "古代史",
+                  "label": "古代史",
+                  "disabled": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "二年级",
+          "label": "初二",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "作文",
+                  "label": "作文",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "方程式",
+                  "label": "方程式",
+                  "disabled": true
+                },
+                {
+                  "value": "三角函数",
+                  "label": "三角函数",
+                  "disabled": true
+                },
+                {
+                  "value": "统计",
+                  "label": "统计",
+                  "disabled": true
+                },
+                {
+                  "value": "图形坐标",
+                  "label": "图形坐标",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "七选五",
+                  "label": "七选五",
+                  "disabled": true
+                },
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "中译英",
+                  "label": "中译英",
+                  "disabled": true
+                },
+                {
+                  "value": "写作",
+                  "label": "写作",
+                  "disabled": true
+                },
+                {
+                  "value": "纠错",
+                  "label": "纠错",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "物理",
+              "label": "物理",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "压力",
+                  "label": "压力",
+                  "disabled": true
+                },
+                {
+                  "value": "浮力",
+                  "label": "浮力",
+                  "disabled": true
+                },
+                {
+                  "value": "摩擦力",
+                  "label": "摩擦力",
+                  "disabled": true
+                },
+                {
+                  "value": "光学",
+                  "label": "光学",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "生物",
+              "label": "生物",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "细胞生物学",
+                  "label": "细胞生物学",
+                  "disabled": true
+                },
+                {
+                  "value": "生态学",
+                  "label": "生态学",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "地理",
+              "label": "地理",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "自然地理",
+                  "label": "自然地理",
+                  "disabled": true
+                },
+                {
+                  "value": "人文地理",
+                  "label": "人文地理",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "政治",
+              "label": "政治",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "政治理论",
+                  "label": "政治理论",
+                  "disabled": true
+                },
+                {
+                  "value": "时事政治",
+                  "label": "时事政治",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "历史",
+              "label": "历史",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "古代史",
+                  "label": "古代史",
+                  "disabled": true
+                },
+                {
+                  "value": "近代史",
+                  "label": "近代史",
+                  "disabled": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "value": "三年级",
+          "label": "初三",
+          "children": [
+            {
+              "value": "语文",
+              "label": "语文",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "作文",
+                  "label": "作文",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "数学",
+              "label": "数学",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "方程式",
+                  "label": "方程式",
+                  "disabled": true
+                },
+                {
+                  "value": "三角函数",
+                  "label": "三角函数",
+                  "disabled": true
+                },
+                {
+                  "value": "统计",
+                  "label": "统计",
+                  "disabled": true
+                },
+                {
+                  "value": "图形坐标",
+                  "label": "图形坐标",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "英语",
+              "label": "英语",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "七选五",
+                  "label": "七选五",
+                  "disabled": true
+                },
+                {
+                  "value": "阅读理解",
+                  "label": "阅读理解",
+                  "disabled": true
+                },
+                {
+                  "value": "中译英",
+                  "label": "中译英",
+                  "disabled": true
+                },
+                {
+                  "value": "写作",
+                  "label": "写作",
+                  "disabled": true
+                },
+                {
+                  "value": "纠错",
+                  "label": "纠错",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "物理",
+              "label": "物理",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "压力",
+                  "label": "压力",
+                  "disabled": true
+                },
+                {
+                  "value": "浮力",
+                  "label": "浮力",
+                  "disabled": true
+                },
+                {
+                  "value": "摩擦力",
+                  "label": "摩擦力",
+                  "disabled": true
+                },
+                {
+                  "value": "光学",
+                  "label": "光学",
+                  "disabled": true
+                },
+                {
+                  "value": "电学",
+                  "label": "电学",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "化学",
+              "label": "化学",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "无机化学",
+                  "label": "无机化学",
+                  "disabled": true
+                },
+                {
+                  "value": "有机化学",
+                  "label": "有机化学",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "政治",
+              "label": "政治",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "政治理论",
+                  "label": "政治理论",
+                  "disabled": true
+                },
+                {
+                  "value": "时事政治",
+                  "label": "时事政治",
+                  "disabled": true
+                },
+                {
+                  "value": "法律基础",
+                  "label": "法律基础",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "value": "历史",
+              "label": "历史",
+              "disabled": true,
+              "children": [
+                {
+                  "value": "古代史",
+                  "label": "古代史",
+                  "disabled": true
+                },
+                {
+                  "value": "近代史",
+                  "label": "近代史",
+                  "disabled": true
+                },
+                {
+                  "value": "世界史",
+                  "label": "世界史",
+                  "disabled": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

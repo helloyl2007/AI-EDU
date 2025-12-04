@@ -1,0 +1,144 @@
+body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: transparent; }
+
+/* 卡片式页面容器 */
+.phet-page {
+	padding: 0; /* 更紧凑，移除外边距 */
+}
+
+.phet-card {
+	background: transparent;
+	border-radius: 0;
+	padding: 0;
+	box-shadow: none;
+	box-sizing: border-box;
+	max-width: none;
+	margin: 0;
+}
+
+.phet-card-header {
+	display: flex;
+	justify-content: flex-end; /* 筛选靠右 */
+	align-items: center;
+	padding: 6px 8px;
+	border-bottom: none;
+}
+
+/* 兼容旧样式的替代或覆盖 */
+header { display: none; }
+
+.subject-grid, .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding: 18px; }
+.subject-card, .content-card { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); text-align: center; display: block; color: inherit; text-decoration: none; }
+.subject-card h2 { margin: 0; }
+.content-card img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 6px; }
+.filters { margin-top: 0; }
+.filters.compact { display: flex; gap: 8px; align-items: center; }
+#search, #category { padding: 6px 8px; margin: 0; font-size: 14px; }
+
+/* 卡片标题更紧凑，只显示一行 */
+.content-card h3 {
+	margin: 8px 0 0 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #222;
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.content-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* 适配 a.content-card */
+.content-card {
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* 分享按钮样式（注：作为非交互元素放在 a.content-card 内） */
+.share-btn {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 2px 8px;
+	font-size: 12px;
+	line-height: 1;
+	background: transparent; /* 去掉背景色 */
+	color: #333;
+	border-radius: 6px;
+	cursor: pointer;
+	vertical-align: middle;
+	user-select: none;
+}
+.share-btn:hover {
+	background: transparent;
+}
+
+/* 图标按钮，垂直居中且与标题高度匹配 */
+.share-btn-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 20px;
+	padding: 0 6px;
+	margin-left: 8px;
+}
+.share-btn-icon { font-size: 16px; line-height: 1; }
+.share-btn-icon svg { width: 16px; height: 16px; vertical-align: middle; }
+
+/* 用于标题与分享按钮的对齐容器 */
+.card-header { display: flex; align-items: center; gap: 8px; justify-content: center; padding-top: 10px; width: 100%; }
+.card-header h3 { margin: 0; text-align: center; }
+
+/* 底部 toast 已移除，使用 popover 作为唯一提示 */
+
+/* 模态提示窗口（无遮罩、fixed定位，避免在 iframe 中遮罩整页） */
+.modal {
+	position: fixed;
+	left: 50%;
+	top: 50%; /* 垂直居中，跟随当前视口 */
+	transform: translate(-50%, -50%);
+	background: rgba(18,18,18,0.96);
+	padding: 12px 16px;
+	border-radius: 8px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.24);
+	max-width: 86%;
+	max-height: 70vh; /* 限制高度，超过则内部滚动，确保在小视口可见 */
+	overflow: auto;
+	text-align: center;
+	z-index: 100000;
+	pointer-events: auto;
+}
+.modal .modal-body { font-size: 14px; color: #fff; line-height: 1.25; }
+.modal.dismissible { cursor: pointer; }
+
+/* Popover 模式（跟随按钮） */
+.modal.popover {
+	position: fixed;
+	transform: none !important;
+	max-width: 320px;
+	max-height: 60vh;
+	padding: 8px 12px;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+	background: rgba(18,18,18,0.96);
+}
+.modal.popover::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 10px;
+	height: 10px;
+	background: rgba(18,18,18,0.96);
+	transform-origin: center;
+	box-shadow: -2px -2px 4px rgba(0,0,0,0.06);
+	/* 默认箭头放在顶部（指向按钮上方） */
+	top: -6px;
+	transform: translateX(-50%) rotate(45deg);
+}
+
+@media (max-height: 420px) {
+	/* 对于高度受限的 iframe，向上靠近顶部并缩小间距，避免超出底部 */
+	.modal { top: 8%; padding: 10px 12px; font-size: 13px; }
+}

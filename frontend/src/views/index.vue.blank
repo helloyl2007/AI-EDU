@@ -1,0 +1,1045 @@
+<template>
+  <el-container class="app-container">
+    <el-header>
+      <div class="header-content">
+        <h2>AI智教助手</h2>
+        <div class="user-info">
+          <span>欢迎, {{ userStore.username }}</span>
+          <el-button type="text" @click="handleLogout">退出</el-button>
+        </div>
+      </div>
+    </el-header>
+    
+    <el-container class="main-container">
+      <el-aside width="200px">
+        <el-menu :router="true" :default-active="currentPath">
+          <el-menu-item index="/aiedu">
+            <el-icon><House /></el-icon>
+            <span>首页</span>
+          </el-menu-item>
+          <el-menu-item index="/aiedu/generate-ppt">
+            <el-icon><Document /></el-icon>
+            <span>课堂巩固</span>
+          </el-menu-item>
+          <el-menu-item index="/aiedu/ppt-to-video">
+            <el-icon><VideoPlay /></el-icon>
+            <span>视频课件</span>
+          </el-menu-item>
+          <el-menu-item index="/aiedu/lesson-plan">
+            <el-icon><Calendar /></el-icon>
+            <span>备课助手</span>
+          </el-menu-item>
+          <el-menu-item index="/aiedu/exam-generator">
+            <el-icon><Edit /></el-icon>
+            <span>单元练习</span>
+          </el-menu-item>
+          <el-sub-menu index="/aiedu/phet">
+            <template #title>
+              <el-icon><SwitchFilled /></el-icon>
+              <span>仿真教学</span>
+            </template>
+            <!-- 使用 index 对应路由，配合 el-menu 的 :router="true" 实现路由高亮与跳转 -->
+            <el-menu-item index="/aiedu/phet/math">数学</el-menu-item>
+            <el-menu-item index="/aiedu/phet/physics">物理</el-menu-item>
+            <el-menu-item index="/aiedu/phet/chemistry">化学</el-menu-item>
+            <el-menu-item index="/aiedu/phet/biology">生物</el-menu-item>
+          </el-sub-menu>
+          <el-menu-item v-if="userStore.$state.roles.includes('admin')" index="/aiedu/users">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      
+      <el-main class="content-container">
+        <router-view v-if="!isHome" />
+
+        <!-- 首页：主框架内置聊天布局（底部输入，内容区根据焦点切换） -->
+        <div v-if="isHome" class="chat-page" style="flex:1 1 auto; min-height:0;">
+          <div 
+            class="chat-content" 
+            :class="{ active: isChatActive, centered: !isChatActive }"
+            ref="messagesContainer"
+          >
+            <!-- 未激活态：简洁首页（Hero + 建议话术 + 快捷入口） -->
+            <template v-if="!isChatActive">
+              <!-- Hero 区 -->
+              <section class="hero">
+                <h1 class="hero-title">你好，我是 AI 智教助手</h1>
+                <p class="hero-subtitle">面向小学阶段的课堂巩固、视频课件、备课与练习的AI协作工具</p>
+                <div class="hero-actions">
+                  <el-button type="primary" round size="large" @click="focusChatInput">开始提问</el-button>
+                  <el-button round size="large" @click="router.push('/aiedu/generate-ppt/create')">创建课件</el-button>
+                </div>
+              </section>
+
+              <!-- 居中多行输入卡片（首页未激活态） -->
+              <section class="home-input-wrap">
+                <div class="home-input-card">
+                  <el-input
+                    v-model="chatInput"
+                    class="home-center-input"
+                    type="textarea"
+                    :rows="6"
+                    resize="none"
+                    placeholder="请输入您的问题或粘贴内容...（Enter 发送，Shift+Enter 换行）"
+                    @keydown.enter.exact.prevent="sendMessage"
+                  />
+                  <div class="home-input-actions">
+                    <el-tooltip content="发送" placement="top">
+                      <el-button
+                        circle
+                        type="primary"
+                        :icon="Promotion"
+                        @click="sendMessage"
+                        :disabled="!chatInput.trim() || isTyping"
+                      />
+                    </el-tooltip>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 建议话术 -->
+              <section class="prompt-section">
+                <div class="prompt-title">试试这些问题</div>
+                <div class="prompt-chips">
+                  <button class="chip" v-for="(p, i) in suggestedPrompts" :key="i" @click="usePrompt(p)">{{ p }}</button>
+                </div>
+              </section>
+
+              <!-- 精简快捷入口 -->
+              <section class="quick-links">
+                <div class="quick-link" @click="router.push('/aiedu/generate-ppt')">
+                  <el-icon><Document /></el-icon>
+                  <span>课堂巩固</span>
+                </div>
+                <div class="quick-link" @click="router.push('/aiedu/ppt-to-video')">
+                  <el-icon><VideoPlay /></el-icon>
+                  <span>视频课件</span>
+                </div>
+                <div class="quick-link" @click="router.push('/aiedu/lesson-plan')">
+                  <el-icon><Calendar /></el-icon>
+                  <span>备课助手</span>
+                </div>
+                <div class="quick-link" @click="router.push('/aiedu/exam-generator')">
+                  <el-icon><Edit /></el-icon>
+                  <span>单元练习</span>
+                </div>
+                <div class="quick-link" @click="router.push('/aiedu/phet/math')">
+                  <el-icon><SwitchFilled /></el-icon>
+                  <span>仿真教学</span>
+                </div>
+              </section>
+              <p class="contact-line">如有问题请联系：<span>13710023040（微信同号）</span></p>
+            </template>
+
+            <!-- 激活态：显示聊天内容（ChatGPT风格） -->
+            <template v-else>
+              <div class="chat-toolbar">
+                <el-button link @click="handleBack" class="back-button">
+                  <el-icon><ArrowLeft /></el-icon>
+                  <span class="back-text">返回</span>
+                </el-button>
+              </div>
+              <div class="chat-messages-container inline">
+                <div class="messages-inner">
+                  <div v-if="chatMessages.length === 0" class="welcome-message">
+                    <div class="welcome-content">
+                      <div class="welcome-icon">💬</div>
+                      <h4>您好！我是AI智教助手</h4>
+                      <p>我可以帮您解答教学相关的问题，提供教学建议和支持。请输入您的问题开始对话吧！</p>
+                    </div>
+                  </div>
+
+                  <div v-for="(msg, index) in chatMessages" :key="index"
+                       :class="['chat-message', msg.role === 'user' ? 'user-message' : 'assistant-message']">
+                    <div class="message-content markdown-content" v-html="renderMarkdown(msg.content)"></div>
+                  </div>
+
+                  <div v-if="isTyping" class="chat-message assistant-message typing">
+                    <div class="message-content">
+                      <div class="markdown-content" v-html="renderMarkdown(typingText)"></div>
+                      <span class="cursor">|</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 激活态输入区并入消息区域，粘在消息区域底部 -->
+                <div class="in-chat-input">
+                  <div class="input-bar">
+                    <el-input
+                      v-model="chatInput"
+                      placeholder="请输入您的问题...（Enter 发送，Shift+Enter 换行）"
+                      @keydown.enter.exact.prevent="sendMessage"
+                      :disabled="isTyping"
+                      class="chat-input"
+                      type="textarea"
+                      :autosize="{ minRows: 2, maxRows: 6 }"
+                      resize="none"
+                    />
+                    <div class="input-actions">
+                      <el-tooltip content="发送" placement="top">
+                        <el-button
+                          circle
+                          type="primary"
+                          :icon="Promotion"
+                          @click="sendMessage"
+                          :disabled="!chatInput.trim() || isTyping"
+                        />
+                      </el-tooltip>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 底部锚点：位于输入区之后，确保滚动到底部时输入区完全可见 -->
+                <div ref="messagesEnd" style="height:1px;"></div>
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+      </el-main>
+    </el-container>
+  </el-container>
+</template>
+
+<script setup>
+import { useUserStore } from '../stores/user'
+import { useRouter, useRoute } from 'vue-router'
+import { House, User, Document, VideoPlay, Edit, Calendar, ArrowRight, ArrowLeft, Close, Promotion, SwitchFilled } from '@element-plus/icons-vue'
+import { ref, computed, nextTick } from 'vue'
+import config from '../config/config'
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
+
+const userStore = useUserStore()
+const router = useRouter()
+const route = useRoute()
+
+// 聊天相关的响应式数据
+const chatInput = ref('')
+const chatMessages = ref([])
+const isTyping = ref(false)
+const typingText = ref('')
+const messagesContainer = ref(null)
+const messagesEnd = ref(null)
+const isChatActive = ref(false)
+// 首页未激活时的建议话术
+const suggestedPrompts = ref([
+  '帮我总结七年级上册第三章要点，并给出3个课堂练习',
+  '把这份PPT的核心知识点提炼成课堂巩固提纲',
+  '根据二次函数教学目标，生成一份10分钟的课堂小测',
+  '给出“电磁感应”一课的教学重难点与讲解思路',
+])
+
+function focusChatInput() {
+  // 激活聊天区域，并在下一帧滚动到输入区
+  isChatActive.value = true
+  nextTick(() => {
+    const el = document.querySelector('.in-chat-input textarea')
+    if (el) el.focus()
+  })
+}
+
+function usePrompt(text) {
+  isChatActive.value = true
+  chatInput.value = text
+  nextTick(() => {
+    const el = document.querySelector('.in-chat-input textarea')
+    if (el) el.focus()
+  })
+}
+
+// 持久化多轮会话ID（用于后端透传到百练会话）
+const sessionId = ref('')
+function initSessionId() {
+  try {
+    const key = 'chat_session_id'
+    const exist = localStorage.getItem(key)
+    if (exist) {
+      sessionId.value = exist
+      return
+    }
+    const gen = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`
+    sessionId.value = gen
+    localStorage.setItem(key, gen)
+  } catch {
+    // 兜底：无法使用 localStorage 时仍生成一次性会话ID
+    sessionId.value = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`
+  }
+}
+initSessionId()
+
+// 判断是否在首页
+const isHome = computed(() => {
+  return route.path === '/aiedu'
+})
+
+// 修改计算属性，确保同时处理智能课件和视频课件的路径映射
+const currentPath = computed(() => {
+  // 处理视频编辑页面，映射到视频课件菜单
+  if (route.path.includes('/aiedu/ppt-to-video/edit/')) {
+    return '/aiedu/ppt-to-video'
+  }
+  
+  // 视频创建页面映射到视频课件菜单
+  if (route.path === '/aiedu/ppt-to-video/create') {
+    return '/aiedu/ppt-to-video'
+  }
+  
+  // 智能课件创建页面映射到智能课件菜单
+  if (route.path === '/aiedu/generate-ppt/create') {
+    return '/aiedu/generate-ppt'
+  }
+  
+  // 其他情况保持原样，不进行路径映射
+  return route.path
+})
+
+async function handleLogout() {
+  try {
+    await userStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('退出失败:', error)
+    // 即使失败也尝试跳转到登录页
+    router.push('/login')
+  }
+}
+
+// 聊天相关方法
+async function sendMessage() {
+  if (!chatInput.value.trim()) return
+  
+  const userMessage = chatInput.value.trim()
+  chatInput.value = ''
+  // 发送时激活聊天区域
+  isChatActive.value = true
+  
+  // 添加用户消息到聊天记录
+  chatMessages.value.push({
+    role: 'user',
+    content: userMessage
+  })
+  
+  // 滚动到底部
+  await nextTick()
+  scrollToBottom()
+  
+  // 开始打字效果
+  isTyping.value = true
+  typingText.value = ''
+  
+  try {
+    // 发送聊天请求
+    const response = await fetch(`${config.apiBaseURL}/api/chat/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userStore.token}`
+      },
+      body: JSON.stringify({
+        message: userMessage,
+        history: chatMessages.value.slice(0, -1), // 排除刚添加的用户消息
+        stream: true,
+        session_id: sessionId.value
+      })
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let assistantMessage = ''
+    
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      
+      const chunk = decoder.decode(value)
+      const lines = chunk.split('\n')
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.substring(6))
+            if (data.error) {
+              throw new Error(data.error)
+            }
+            if (data.content) {
+              assistantMessage += data.content
+              typingText.value = assistantMessage
+              await nextTick()
+              scrollToBottom()
+            }
+            if (data.finished) {
+              isTyping.value = false
+              chatMessages.value.push({
+                role: 'assistant',
+                content: assistantMessage
+              })
+              await nextTick()
+              scrollToBottom()
+              break
+            }
+          } catch (e) {
+            console.error('解析SSE数据失败:', e)
+          }
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.error('聊天请求失败:', error)
+    isTyping.value = false
+    chatMessages.value.push({
+      role: 'assistant',
+      content: '抱歉，由于网络问题，我现在无法回答您的问题，请稍后再试。'
+    })
+    await nextTick()
+    scrollToBottom()
+  }
+}
+
+function scrollToBottom() {
+  // 优先使用底部锚点，让外层主滚动容器滚动到底部
+  if (messagesEnd.value && typeof messagesEnd.value.scrollIntoView === 'function') {
+    messagesEnd.value.scrollIntoView({ behavior: 'auto', block: 'end' })
+    return
+  }
+  // 兜底：如果锚点不可用，尝试使用旧的容器滚动
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+  }
+}
+
+function handleBack() {
+  // 返回到功能入口视图（保留历史消息，但不显示聊天区）
+  isChatActive.value = false
+}
+
+function renderMarkdown(content) {
+  if (!content) return ''
+  try {
+    let processed = content
+    processed = processed.replace(/\$([^$\n]+?)\$/g, (m, f) => {
+      try { return katex.renderToString(f, { throwOnError: false, displayMode: false }) } catch { return m }
+    })
+    processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (m, f) => {
+      try { return katex.renderToString(f, { throwOnError: false, displayMode: true }) } catch { return m }
+    })
+    return DOMPurify.sanitize(marked(processed))
+  } catch {
+    return DOMPurify.sanitize(marked(content))
+  }
+}
+</script>
+
+<style scoped>
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.content-container {
+  /* 作为主滚动容器，同时保持列布局以兼容聊天区（上内容区 + 底部粘性输入） */
+  overflow-y: auto;  /* 溢出才显示竖向滚动条 */
+  overflow-x: hidden; /* 避免出现横向滚动条 */
+  padding: 16px 16px 6px 16px;
+}
+
+.dashboard {
+  height: 100vh;
+}
+
+.el-aside {
+  background-color: #f8f9fa;
+}
+
+/* 首页样式  */
+/* 新首页布局：主框架 + 固定底部输入 */
+.chat-page {
+  /* 使用弹性布局填满可用空间，滚动交由外层 .content-container 统一处理 */
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible; /* 避免与外层形成双滚动条 */
+  height:100%;
+}
+
+.chat-content {
+  /* 作为列布局容器，便于消息区域占满剩余空间，输入区贴底 */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 8px 8px 4px 8px; /* 进一步减少底部内边距，提高可用空间 */
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.chat-content.active {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 12px 12px 8px 12px; /* 激活态也减少底部 padding */
+}
+
+/* 未激活态整体垂直居中 */
+.chat-content.centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 简洁首页：Hero */
+.hero { text-align: center; padding: 36px 12px 8px; }
+.hero-title { font-size: 32px; font-weight: 700; margin: 0 0 8px; }
+.hero-subtitle { color: #606266; margin: 0 0 16px; font-size: 16px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; margin-bottom: 8px; }
+
+/* 建议话术 */
+.prompt-section { margin: 8px auto 12px; max-width: 880px; }
+.prompt-title { color: #909399; font-size: 14px; margin-bottom: 8px; text-align: center; }
+.prompt-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chip {
+  border: 1px solid #e4e7ed;
+  background: #fff;
+  color: #606266;
+  border-radius: 16px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.chip:hover { background: #f5f7fa; }
+
+/* 快捷入口（精简版栅格） */
+.quick-links { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 12px; margin: 8px auto; max-width: 980px; }
+.quick-link { background: #fff; border: 1px solid #ebeef5; border-radius: 12px; padding: 14px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; justify-content: center; transition: all .2s ease; }
+.quick-link:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); background: var(--el-color-primary-light-9); border-color: var(--el-color-primary-light-5); }
+.quick-link:hover span { color: var(--el-color-primary); }
+.quick-link .el-icon { color: #303133; }
+.quick-link:hover .el-icon { color: var(--el-color-primary); }
+
+.contact-line { text-align: center; color: #909399; margin-top: 6px; }
+.contact-line span { color: #1e888e; }
+
+@media (max-width: 992px) {
+  .quick-links { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 576px) {
+  .quick-links { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: 24px; }
+}
+
+/* 首页居中输入卡片 */
+.home-input-wrap { display: flex; justify-content: center; margin: 12px 0 12px; }
+.home-input-card { position: relative; width: min(750px, 92vw); background: transparent; border-radius: 15px; overflow: hidden; }
+.home-center-input :deep(.el-textarea) { border-radius: 15px; overflow: hidden; }
+.home-center-input :deep(.el-textarea__inner) { font-size: 16px; line-height: 1.8; padding: 12px 48px 12px 12px; max-height: 140px; border-radius: 15px; background-color: #fff; }
+.home-input-actions { position: absolute; right: 22px; bottom: 22px; }
+
+@media (min-width: 1400px) {
+  .home-input-card { width: 800px; }
+}
+
+.dashboard-welcome-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+
+.dashboard-welcome-subtitle {
+  text-align: center;
+  color: #606266;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+/* 聊天面板样式 */
+.chat-header {
+  padding: 20px;
+  border-bottom: 1px solid #e1e8ed;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.chat-header h3 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chat-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.chat-messages-container.inline {
+  /* 让消息区域占满可用高度，便于输入区贴底 */
+  min-height: 240px; /* 略增高度，减少底部留白的视觉感受 */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0; /* 防止内容溢出时影响布局计算 */
+}
+
+/* 消息内层容器：与输入区同宽并居中 */
+.chat-messages-container.inline .messages-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 880px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.welcome-message {
+  /* 占据可用空间，并在容器内垂直与水平居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  padding: 0 12px;
+  text-align: center;
+}
+
+.welcome-content {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.welcome-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.welcome-content h4 {
+  margin: 0 0 10px 0;
+  color: #303133;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.welcome-content p {
+  margin: 0;
+  color: #606266;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 激活态：输入区粘在消息区域底部（并入消息区域） */
+.in-chat-input {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  /* 置为透明，避免出现浅灰底色 */
+  background: transparent;
+  padding: 0; /* 贴底，无额外空白 */
+  /* 当内容不足以产生滚动时，也将输入区推至容器底部 */
+  margin-top: auto;
+}
+
+/* 居中并限制宽度，避免影响首页输入 */
+.in-chat-input .input-bar {
+  position: relative;
+  padding: 6px 0;
+  margin: 0 auto;
+  max-width: 880px;
+  width: 100%;
+}
+
+.input-actions { position: absolute; right: 10px; bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+.in-chat-input .el-textarea {
+  /* 外层容器不再显示边框和背景，避免与内层重叠出现双边线 */
+  box-shadow: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.chat-input { width: 100%; }
+/* 仅给内层输入框设置边框与背景，避免双边 */
+.chat-input :deep(.el-textarea__inner) {
+  padding-right: 48px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* 响应式：小屏更贴边，大屏略放宽 */
+@media (max-width: 1024px) {
+  .in-chat-input .input-bar,
+  .chat-messages-container.inline .messages-inner { max-width: none; width: 92vw; }
+}
+@media (min-width: 1600px) {
+  .in-chat-input .input-bar,
+  .chat-messages-container.inline .messages-inner { max-width: 980px; }
+}
+
+/* 顶部工具栏（返回按钮） */
+.chat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.back-button .el-icon {
+  margin-right: 4px;
+}
+
+/* 聊天消息样式 */
+.chat-message {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.assistant-message {
+  justify-content: flex-start; /* AI 回答靠左 */
+}
+
+.message-content {
+  max-width: 100%;
+  padding: 10px 15px;
+  border-radius: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.user-message .message-content {
+  background: #409EFF;
+  color: white;
+  border-top-right-radius: 6px;
+}
+
+.assistant-message .message-content {
+  color: #303133;
+  border-top-left-radius: 6px;
+}
+
+.typing .message-content {
+  /* 统一与完成态一致的浅灰底色 */
+  color: #303133;
+}
+
+/* 移除问/答样式：由左右对齐与气泡底色区分 */
+
+.cursor {
+  animation: blink 1s infinite;
+}
+
+/* Markdown 内容样式（简版） */
+.markdown-content { font-size: 16px; line-height: 1.8; }
+.markdown-content :deep(p) { margin: 0 0; }
+.markdown-content :deep(ol), .markdown-content :deep(ul) { padding-left: 18px; margin: 8px 0; }
+.markdown-content :deep(code) { font-family: 'Courier New', Courier, monospace; padding: 2px 4px; background: #f5f7fa; border-radius: 2px; }
+.markdown-content :deep(pre) { margin: 12px 0; padding: 12px; background: #f5f7fa; border-radius: 4px; overflow-x: auto; }
+.markdown-content :deep(table) { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.markdown-content :deep(th), .markdown-content :deep(td) { padding: 6px 10px; border: 1px solid #dcdfe6; }
+.markdown-content :deep(th) { background: #f5f7fa; }
+.markdown-content :deep(.katex) { font-size: 1.05em; }
+.markdown-content :deep(.katex-display) { margin: 0.8em 0; text-align: center; }
+/* 更浅色、无阴影的水平线样式 */
+.markdown-content :deep(hr) {
+  box-shadow: none;
+  border: none;
+  border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
+  height: 0;
+  margin: 14px 0;
+  background: transparent;
+  opacity: 0.9; /* 略浅一点 */
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.dashboard-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: none;
+}
+
+.dashboard-feature-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  align-items: flex-start; /* 修改为flex-start，使内容从顶部开始 */
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+  color:#fff;
+}
+
+.dashboard-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--primary-gradient);
+  opacity: 0.8;
+}
+
+.dashboard-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dashboard-card-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  flex-shrink: 0;
+  align-self: center; /* 添加align-self使图标保持垂直居中 */
+}
+
+.dashboard-card-content {
+  padding-top: 10px; /* 添加上方内边距，使内容与卡片顶部有一定距离 */
+}
+
+.dashboard-card-icon .el-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.dashboard-card-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #303133;
+}
+
+.dashboard-card-content p {
+  color: #606266;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* 新增: 卡片右下角操作提示样式 */
+.dashboard-card-action {
+  position: absolute;
+  bottom: 15px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: rgba(244, 247, 250, 0.8);
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-card-action span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #606266;
+}
+
+.dashboard-card-action .el-icon {
+  font-size: 12px;
+  color: #606266;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-feature-card:hover .dashboard-card-action {
+  background-color: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.dashboard-feature-card:hover .dashboard-card-action .el-icon {
+  transform: translateX(3px);
+  color: #409EFF;
+}
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+  .dashboard-home-layout {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .dashboard-chat-panel {
+    width: 100%;
+    height: 400px;
+  }
+  
+  .dashboard-feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-feature-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-chat-panel {
+    height: 350px;
+  }
+  
+  .dashboard-welcome-title {
+    font-size: 24px;
+  }
+  
+  .dashboard-welcome-subtitle {
+    font-size: 16px;
+  }
+}
+
+/* 针对不同高度屏幕的自适应处理 */
+@media (max-height: 800px) {
+  .dashboard-welcome-title {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .dashboard-card-content {
+    padding-top: 0px;
+  }
+
+  .dashboard-welcome-subtitle {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .dashboard-feature-card {
+    min-height: 130px;
+    padding: 16px;
+  }
+  
+  .dashboard-card-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .dashboard-card-content h3 {
+    font-size: 16px;
+  }
+  
+  .dashboard-card-content p {
+    font-size: 14px;
+  }
+  
+  .dashboard-card-action {
+    bottom: 10px;
+    right: 20px;
+    padding: 4px 10px;
+  }
+  
+  .dashboard-card-action span {
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 600px) {
+  .dashboard-feature-grid {
+    gap: 12px;
+  }
+  
+  .dashboard-feature-card {
+    min-height: 90px;
+  }
+  
+  .dashboard-welcome-title {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  
+  .dashboard-welcome-subtitle {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-card-action {
+    bottom: 8px;
+    right: 12px;
+    padding: 3px 8px;
+  }
+}
+
+/* 仿真教学子菜单及父菜单激活高亮 */
+:deep(.el-menu-item.is-active) {
+  background-color: rgba(30,136,142,0.08) !important; /* 轻微背景高亮 */
+  color: #ffffff !important; /* 恢复为白色 */
+  border-radius: 8px;
+}
+
+/* 激活项的图标也使用白色 */
+:deep(.el-menu-item.is-active .el-icon) {
+  color: #ffffff !important;
+}
+
+/* 当子菜单被激活或子菜单被展开时，给父菜单标题添加高亮 */
+:deep(.el-submenu.is-opened > .el-submenu__title) {
+  background-color: rgba(30,136,142,0.06) !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+}
+
+/* 父菜单标题图标白色 */
+:deep(.el-submenu.is-opened > .el-submenu__title .el-icon) {
+  color: #ffffff !important;
+}
+
+/* 微调子菜单标题的内边距，避免高亮时文字贴边 */
+:deep(.el-submenu__title),
+:deep(.el-menu-item) {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+</style>

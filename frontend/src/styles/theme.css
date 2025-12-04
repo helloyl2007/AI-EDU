@@ -1,0 +1,443 @@
+/* 渐变主题配色 - 调整为更柔和的色调 */
+:root {
+    /* --primary-gradient: linear-gradient(135deg, #20A4F3 0%, #182B7A 100%); */
+    --primary-gradient: -webkit-linear-gradient(90deg, #32abff,#c7d086);
+    --primary-gradient: linear-gradient(90deg, #32abff,#c7d086);
+    --bg-gradient-light: linear-gradient(135deg, rgba(32,164,243,0.1) 0%, rgba(24,43,122,0.1) 100%);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --border-radius: 12px;
+    --transition-normal: all 0.3s ease;
+    --input-height: 40px;
+    --input-radius: 8px;
+    --input-padding: 12px;
+    --input-border-color: #e4e7ed;
+    --input-focus-color: #20A4F3;
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --el-font-size-base:16px;
+
+    /* 新增功能卡片渐变色 - 保留供Dashboard使用 */
+    --card-gradient-blue: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --card-gradient-pink: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --card-gradient-green: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --card-gradient-purple: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --card-gradient-teal: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+}
+  
+/* 全局基础样式 */
+.el-container {
+    background-color: #f8fafc;
+    height: 100%;
+}
+  
+/* Dashboard样式 */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: #fff;
+}
+
+/* 修复嵌套写法：将 .header-content 内的 h2 样式改为扁平选择器 */
+.header-content h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(to right, #fff, rgba(255,255,255,0.8));
+    -webkit-background-clip: text;
+    background-clip: text; /* 兼容性声明 */
+    color: transparent;
+}
+  
+.el-header {
+    background: var(--primary-gradient);
+    box-shadow: var(--shadow-md);
+    height: 60px !important;
+    flex-shrink: 0; /* 防止header被压缩 */
+}
+  
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #fff;
+}
+  
+.user-info .el-button {
+    color: #fff;
+}
+  
+.dashboard {
+    height: 100vh;
+    background-color: #f8fafc;
+}
+  
+.el-aside {
+    background: rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-sm);
+    margin: 16px 0 16px 16px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    height: calc(100vh - 32px); /* 减去上下margin的高度 */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+  
+.el-main {
+    height: 100%;
+    padding: 16px;
+    overflow: hidden; /* 移除main的滚动条 */
+}
+  
+.el-menu {
+    border-right: none;
+    padding: 8px;
+}
+  
+.el-menu-item {
+    border-radius: 8px;
+    margin: 8px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 0.95rem;
+}
+  
+.el-menu-item:hover {
+    background: var(--bg-gradient-light);
+}
+  
+.el-menu-item.is-active {
+    background: var(--primary-gradient);
+    color: #fff !important;
+    font-weight: 500;
+}
+  
+/* PPT列表页样式 */
+.ppt-list {
+    padding: 20px;
+    background: rgba(255,255,255,0.9);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    transition: var(--transition-normal);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+  
+.ppt-list:hover {
+    box-shadow: var(--shadow-md);
+}
+  
+.header h2 {
+    font-size: 24px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+  
+.ppt-list .header {
+    flex-shrink: 0; /* 防止header被压缩 */
+    margin-bottom: 16px;
+}
+
+.ppt-list .el-table {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* 主按钮按钮样式 */
+.el-button--primary {
+    background: linear-gradient(135deg, #4facfe 0%, #05dfea 100%);
+    border: none;
+    padding: 16px 32px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    font-size: 16px;
+    /* box-shadow: 0 4px 15px rgba(79, 172, 254, 0.2); */
+}
+  
+.el-button--primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #05dfea 0%, #4facfe 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+  
+.el-button--primary:hover {
+    /* box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3); */
+}
+  
+.el-button--primary:hover::before {
+    opacity: 1;
+}
+  
+.el-button--primary span {
+    position: relative;
+    z-index: 1;
+    color:#fff;
+}
+  
+.el-button--primary .el-icon {
+    margin-right: 4px;
+    vertical-align: middle;
+    font-size: 1.2em;
+    position: relative;
+    z-index: 1;
+}
+
+/* 保留专属于Dashboard首页的图标背景色 */
+.document-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.video-icon {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.plan-icon {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.exam-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.user-icon {
+  background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+}
+
+/* Success 按钮样式 */
+.el-button--success {
+    background: linear-gradient(135deg, #60d69b 0%, #28e1db 100%);
+    border: none;
+    padding: 16px 32px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    font-size: 16px;
+    /* box-shadow: 0 4px 15px rgba(82, 196, 26, 0.2); */
+}
+  
+.el-button--success::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #28e1db 0%, #60d69b 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+  
+.el-button--success:hover {
+    /* box-shadow: 0 6px 20px rgba(82, 196, 26, 0.3); */
+}
+  
+.el-button--success:hover::before {
+    opacity: 1;
+}
+  
+.el-button--success span {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+}
+  
+.el-button--success .el-icon {
+    margin-right: 4px;
+    vertical-align: middle;
+    font-size: 1.2em;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+}
+  
+/* 列表按钮样式 */
+.el-button--info {
+    font-size: 16px;
+    color:#20A4F3 !important;
+}
+  
+.el-button--info:hover {
+    color:#94d1f5 !important;
+}
+  
+.el-button--info:hover::before {
+    opacity: 0.8;
+}
+  
+.el-button--info span {
+    position: relative;
+    z-index: 1;
+}
+  
+.el-table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    font-size:16px;
+}
+  
+.el-table th {
+    background: #c3f3ff;  /* 改用清新的纯色背景 */
+    font-weight: 500;
+    color: #2c3e50;  /* 深灰色文字 */
+}
+  
+ 
+/* PPT生成页样式 */
+.generate-ppt {
+    padding: 20px;
+    background: rgba(255,255,255,0.9);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    transition: var(--transition-normal);
+    min-height:800px;
+}
+  
+.generate-ppt:hover {
+    box-shadow: var(--shadow-md);
+}
+  
+.el-steps {
+    padding: 24px;
+    background: var(--bg-gradient-light);
+    border-radius: 12px;
+    margin-bottom: 32px;
+}
+  
+.el-step__head.is-process {
+    color: #20A4F3;
+    border-color: #20A4F3;
+}
+  
+.el-step__title.is-process {
+    color: #2c3e50;
+    font-weight: 500;
+}
+  
+.input-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+  
+.el-input__inner,
+.el-textarea__inner {
+    border-radius: 5px;
+}
+
+.template-item {
+    display: inline-block;
+    margin: 10px;
+    transition: all 0.3s ease;
+}
+  
+.template-card {
+    text-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-normal);
+    border: 1px solid rgba(32,164,243,0.1);
+}
+  
+.template-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+  
+.template-card img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: var(--transition-normal);
+}
+  
+.template-card:hover img {
+    transform: scale(1.05);
+}
+  
+.template-card span {
+    display: block;
+    margin-top: 8px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+  
+.el-radio__input.is-checked .el-radio__inner {
+    /* background: var(--primary-gradient); */
+    border-color: transparent;
+}
+  
+.el-form-item {
+    margin-bottom: 20px;
+}
+  
+.el-select {
+    width: 100%;
+}
+
+/* 统一表单控件样式 */
+.el-input__wrapper,
+.el-textarea__wrapper {
+  background-color: var(--input-bg) !important;
+  border-radius: var(--input-radius) !important;
+  box-shadow: 0 0 0 1px var(--input-border-color) !important;
+  padding: 1px var(--input-padding) !important;
+}
+
+
+/* 统一高度 */
+.el-input__wrapper {
+  height: var(--input-height) !important;
+}
+
+/* 选择器样式统一 */
+.el-select .el-input {
+  height: var(--input-height) !important;
+}
+
+/* 文本域内边距 */
+.el-textarea__inner {
+  padding: 8px var(--input-padding) !important;
+}
+
+/* 危险操作按钮(删除) */
+.el-button--danger {
+  color: #ff4d4f;
+  background: transparent;
+  font-size:16px !important;
+}
+
+.el-button--danger:hover {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+
+
+/* 禁用状态 */
+.el-button--link.is-disabled {
+  color: #c0c4cc !important;
+  background: transparent !important;
+  cursor: not-allowed;
+}
+
